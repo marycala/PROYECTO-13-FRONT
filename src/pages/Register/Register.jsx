@@ -31,7 +31,7 @@ const Register = () => {
           password: "",
         }}
         validationSchema={validationSchema}
-        onSubmit={(values) => handleSubmit("/register", values, "Registration Successful")}
+        onSubmit={(values) => handleSubmit("/users/register", values, "Registration Successful")}
       >
         {({ values, handleChange, handleBlur, errors, touched }) => (
           <Form>
