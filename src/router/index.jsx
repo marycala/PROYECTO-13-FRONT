@@ -11,7 +11,7 @@ import NotFound from "../pages/NotFound/NotFound";
 import EventDetail from "../pages/EventDetail/EventDetail";
 import AppLayout from "../layouts/AppLayout";
 import { useEffect } from "react";
-import { setApiNavigate } from "../api";
+import { setApiNavigate } from "../utils/apiFetch";
 
 const RouterWithNavigate = () => {
   const navigate = useNavigate();
