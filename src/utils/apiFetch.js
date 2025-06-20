@@ -107,9 +107,10 @@ export const patch = (url, body, options = {}) => {
   });
 };
 
-export const remove = (eventId, options = {}) => {
-  return apiFetch(`/events/${eventId}`, {
-    method: "DELETE",
-    ...options,
-  });
+export const remove = (url) => {
+  return apiFetch(url, { method: "DELETE" });
+};
+
+export const deleteEvent = (eventId) => {
+  return remove(`/events/${eventId}`);
 };
