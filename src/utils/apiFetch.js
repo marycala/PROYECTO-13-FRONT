@@ -1,4 +1,4 @@
-const API_URL = "https://proyecto-13-back.onrender.com/api/v1";
+const API_URL = import.meta.env.VITE_API_URL;
 
 let navigate = null;
 
