@@ -52,7 +52,7 @@ const Events = () => {
 
   return (
     <Box>
-      <Flex wrap="wrap" gap={2} justify="center" mt={{ base: "8", md: "0" }}>
+      <Flex wrap="wrap" gap={2} justify="center">
         {categories.map((cat) => (
           <Button
             key={cat}
