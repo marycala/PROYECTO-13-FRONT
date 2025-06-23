@@ -1,4 +1,4 @@
-const API_URL = "https://proyecto-13-back.onrender.com";
+const API_URL = "https://proyecto-13-back.onrender.com/api/v1";
 
 let navigate = null;
 
