@@ -15,7 +15,7 @@ const useAuthForm = () => {
     setIsLoading(true);
 
     try {
-      const data = await post(url, values);
+      const data = await post(url, values, { timeout: 20000 });
 
       if (data.token && data.user) {
         login(data.token, data.user);
