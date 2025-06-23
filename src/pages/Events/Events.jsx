@@ -66,42 +66,57 @@ const Events = () => {
         ))}
       </Flex>
 
-      <Flex flexDirection={{ base: "column", md: "row" }}>
-        <Filters
-          searchTitle={searchTitle}
-          setSearchTitle={setSearchTitle}
-          searchLocation={searchLocation}
-          setSearchLocation={setSearchLocation}
-          minPrice={minPrice}
-          setMinPrice={setMinPrice}
-          maxPrice={maxPrice}
-          setMaxPrice={setMaxPrice}
-          minDate={minDate}
-          setMinDate={setMinDate}
-          maxDate={maxDate}
-          setMaxDate={setMaxDate}
-          communities={communities}
-          resetFilters={resetFilters}
-        />
+      <Flex 
+        flexDirection={{ base: "column", md: "row" }} 
+        align="flex-start"
+        gap={6}
+        px={{ base: 4, md: 8 }}
+        py={4}
+      >
+        <Box 
+          maxWidth={{ base: "100%", md: "300px" }} 
+          mt={{ base: 4, md: 0 }}
+          mb={{ base: 8, md: 0 }}
+        >
+          <Filters
+            searchTitle={searchTitle}
+            setSearchTitle={setSearchTitle}
+            searchLocation={searchLocation}
+            setSearchLocation={setSearchLocation}
+            minPrice={minPrice}
+            setMinPrice={setMinPrice}
+            maxPrice={maxPrice}
+            setMaxPrice={setMaxPrice}
+            minDate={minDate}
+            setMinDate={setMinDate}
+            maxDate={maxDate}
+            setMaxDate={setMaxDate}
+            communities={communities}
+            resetFilters={resetFilters}
+          />
+        </Box>
 
-        <Box flex="1" px={4}>
-          <Flex flexDirection="column" align="center" gap={6} w="100%">
+        <Box flex="1">
+          <Flex 
+            flexDirection="column" 
+            align="center" 
+            gap={6}
+            w="100%"
+          >
             {eventsToDisplay.length === 0 ? (
-              <Text display="flex" alignItems="center" fontSize="lg" color="gray.600">No events available.</Text>
+              <Text fontSize="lg" color="gray.600">No events available.</Text>
             ) : (
-              eventsToDisplay.map((event) => {
-                return (
-                  <Box key={event._id} w="100%" maxW="1000px">
-                    <EventCard
-                      event={event}
-                      isFavorite={favorites.includes(event._id)}
-                      onToggleFavorite={() => toggleFavorite(event._id)}
-                      loading={loading === event._id}
-                      user={user}
-                    />
-                  </Box>
-                );
-              })
+              eventsToDisplay.map((event) => (
+                <Box key={event._id} w="100%" maxW="1000px">
+                  <EventCard
+                    event={event}
+                    isFavorite={favorites.includes(event._id)}
+                    onToggleFavorite={() => toggleFavorite(event._id)}
+                    loading={loading === event._id}
+                    user={user}
+                  />
+                </Box>
+              ))
             )}
           </Flex>
         </Box>
