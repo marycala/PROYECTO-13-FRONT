@@ -20,7 +20,7 @@ const Filters = ({
     <Box 
       maxWidth={{ base: "100%", md: "300px" }} 
       mt={{ base: "15", md: "0" }}
-      mb={{ base: "0", md: "8" }}
+      mb="8"
       mx={{ base: 4, md: 0 }} 
       marginLeft={{ md: 8 }}
     >
