@@ -10,7 +10,7 @@ const AppLayout = () => {
         <Header />
       </Box>
 
-      <Box id="scroll-container" h="82vh" overflowY="auto">
+      <Box id="scroll-container" h="82vh" overflowY="auto" pt="4">
         <Outlet />
       </Box>
 
