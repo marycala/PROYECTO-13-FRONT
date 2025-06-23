@@ -18,10 +18,10 @@ const EventActionButtons = ({ event }) => {
 
   const isAdminOrCreator =
     user &&
-    (user.rol?.includes("admin") || event?.creator?._id === user._id);
+    (user.rol === ("admin") || event?.creator?._id === user._id);
 
   const handleEdit = () => {
-    navigate(`/edit/${event._id}`);
+    navigate(`/events/edit/${event._id}`);
   };
 
   if (!isAdminOrCreator) return null;
