@@ -4,6 +4,7 @@ import EventForm from "../../components/EventForm/EventForm";
 import useEditEventForm from "../../hooks/useEditEventForm";
 import { get } from "../../utils/apiFetch";
 import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
+import { Box } from "@chakra-ui/react";
 
 const formatDateForInput = (dateStr) => {
   const date = new Date(dateStr);
