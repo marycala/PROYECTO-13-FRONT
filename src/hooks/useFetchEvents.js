@@ -10,7 +10,7 @@ const useFetchEvents = (token) => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const eventsData = await get("/events", token);
+        const eventsData = await get("/events");
         setEvents(eventsData);
       } catch (error) {
         toast({
@@ -25,9 +25,7 @@ const useFetchEvents = (token) => {
       }
     };
 
-    if (token) {
       fetchEvents();
-    }
   }, [token, toast]);
 
   return { events, loading };
