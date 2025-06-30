@@ -4,7 +4,6 @@ import GoBackButton from "../GoBackButton/GoBackButton";
 import EventActionButtons from "../EventActionButtons/EventActionButtons";
 
 const EventDetailContent = ({ event, attendees, isLoggedIn }) => {
-  console.log("Event:", event);
   console.log("Attendees:", attendees);
   return (
     <Box maxW="90%" mx="auto" mt={2} p={4}>
@@ -47,7 +46,7 @@ const EventDetailContent = ({ event, attendees, isLoggedIn }) => {
             ) : (
               attendees.map((attendee) => (
                 <ListItem key={attendee._id}>
-                  {attendee.userId?.userName || 'Unknown user'}
+                  {attendee.userName || 'Unknown user'}
                 </ListItem>
               ))
             )}
