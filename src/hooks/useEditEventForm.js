@@ -15,7 +15,14 @@ const useEditEventForm = (eventId) => {
       const formData = new FormData();
       for (const key in values) {
         if (values[key] !== undefined && values[key] !== null) {
-          formData.append(key, String(values[key]));
+          let valueToSend = values[key];
+
+          if (key === "date") {
+            const date = new Date(values[key]);
+            valueToSend = date.toISOString();
+          }
+
+          formData.append(key, String(valueToSend));
         }
       }
       if (imageFile) {
