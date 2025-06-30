@@ -20,7 +20,7 @@ const useEditEventForm = (eventId) => {
         formData.append("img", imageFile);
       }
 
-      const updated = await put(`/events/${eventId}`, formData, true);
+      const updated = await put(`/events/${eventId}`, formData, { isFormData: true });
 
       toast({
         title: "Event updated",
