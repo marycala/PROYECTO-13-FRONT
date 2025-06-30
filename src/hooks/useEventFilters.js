@@ -1,4 +1,5 @@
 import { useState } from "react";
+import regions from "../utils/regions";
 
 const useEventFilters = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -25,35 +26,14 @@ const useEventFilters = () => {
     "Other",
   ];
 
-  const communities = [
-    "All",
-    "Andalusia",
-    "Catalonia",
-    "Madrid",
-    "Valencia",
-    "Galicia",
-    "Castile and León",
-    "Basque Country",
-    "Castilla-La Mancha",
-    "Canary Islands",
-    "Balearic Islands",
-    "Aragon",
-    "Murcia",
-    "Extremadura",
-    "Cantabria",
-    "La Rioja",
-    "Navarre",
-    "Asturias",
-    "Ceuta",
-    "Melilla",
-  ];
+  const communities = ["All", ...Object.keys(regions)];
 
   const filteredEvents = (events) => {
     return events.filter((event) => {
       return (
         (selectedCategory === "All" || event.category === selectedCategory) &&
         (searchTitle === "" || event.title.toLowerCase().includes(searchTitle.toLowerCase())) &&
-        (searchLocation === "All" || event.location.toLowerCase().includes(searchLocation.toLowerCase())) &&
+        (searchLocation === "All" || (regions[searchLocation] && regions[searchLocation].includes(event.location))) &&
         (minPrice === "" || event.price >= parseFloat(minPrice)) &&
         (maxPrice === "" || event.price <= parseFloat(maxPrice)) &&
         (minDate === "" || new Date(event.date) >= new Date(minDate)) &&
