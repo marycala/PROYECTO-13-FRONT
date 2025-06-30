@@ -92,7 +92,13 @@ const EventCard = ({
       <Box flex="1" align="center">
         <Heading size="md">{event.title}</Heading>
         <Text fontSize="sm" color="gray.500">
-          {new Date(event.date).toLocaleString([], { hour: '2-digit', minute: '2-digit' })} - {event.location}
+        {new Date(event.date).toLocaleString(undefined, {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        })} - {event.location}
         </Text>
         {!isCompact && (
           <Text mt={2}>{event.description}</Text>
