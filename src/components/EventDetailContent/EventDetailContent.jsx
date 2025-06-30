@@ -22,7 +22,13 @@ const EventDetailContent = ({ event, attendees, isLoggedIn }) => {
       />
       <Stack spacing={2} align="center">
         <Text fontSize="md" mb={2} color="gray.600">
-          {new Date(event.date).toLocaleString()} — {event.location}
+        {new Date(event.date).toLocaleString(undefined, {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        })} - {event.location}
         </Text>
         <Text mb={4}>{event.description}</Text>
         <Text fontWeight="bold" color="teal.500" mb={4}>
