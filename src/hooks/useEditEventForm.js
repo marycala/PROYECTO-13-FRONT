@@ -14,7 +14,9 @@ const useEditEventForm = (eventId) => {
     try {
       const formData = new FormData();
       for (const key in values) {
-        formData.append(key, String(values[key]));
+        if (values[key] !== undefined && values[key] !== null) {
+          formData.append(key, String(values[key]));
+        }
       }
       if (imageFile) {
         formData.append("img", imageFile);
