@@ -44,7 +44,9 @@ const EventDetailContent = ({ event, attendees, isLoggedIn }) => {
               <Text>No attendees yet.</Text>
             ) : (
               attendees.map((attendee) => (
-                <ListItem key={attendee._id}>{attendee.name}</ListItem>
+                <ListItem key={attendee._id}>
+                  {attendee.userId?.userName || 'Unknown user'}
+                </ListItem>
               ))
             )}
           </List>
@@ -52,6 +54,7 @@ const EventDetailContent = ({ event, attendees, isLoggedIn }) => {
           <Text>You must log in to see the attendee names.</Text>
         )}
       </Box>
+
      </Flex>
       <Flex justifyContent="center" gap="30px">
         <EventActionButtons event={event}/>
