@@ -9,9 +9,9 @@ import Filters from "../../components/Filters/Filters";
 import ScrollToTopButton from "../../components/ScrollToTopButton/ScrollToTopButton";
 
 const Events = () => {
-  const { user, token } = useAuth();
+  const { user } = useAuth();
   const { favorites, toggleFavorite, loading } = useFavorites();
-  const { events, loading: eventsLoading, page, setPage, totalPages } = useFetchEvents(token);
+
   const {
     selectedCategory,
     setSelectedCategory,
@@ -29,9 +29,20 @@ const Events = () => {
     setMaxDate,
     categories,
     communities,
-    filteredEvents,
     resetFilters
   } = useEventFilters();
+
+  const filters = {
+    category: selectedCategory !== "All" ? selectedCategory : undefined,
+    title: searchTitle || undefined,
+    location: searchLocation !== "All" ? searchLocation : undefined,
+    minPrice: minPrice || undefined,
+    maxPrice: maxPrice || undefined,
+    minDate: minDate || undefined,
+    maxDate: maxDate || undefined,
+  };
+
+  const { events, loading: eventsLoading, page, setPage, totalPages } = useFetchEvents(filters, 1, 10);
 
   if (eventsLoading || loading) {
     return (
@@ -47,8 +58,6 @@ const Events = () => {
       </Box>
     );
   }
-
-  const eventsToDisplay = filteredEvents(events);
 
   return (
     <Box>
@@ -103,10 +112,10 @@ const Events = () => {
             gap={6}
             w="100%"
           >
-            {eventsToDisplay.length === 0 ? (
+            {events.length === 0 ? (
               <Text fontSize="lg" color="gray.600">No events available.</Text>
             ) : (
-              eventsToDisplay.map((event) => (
+              events.map((event) => (
                 <Box key={event._id} w="100%" maxW="1000px">
                   <EventCard
                     event={event}
