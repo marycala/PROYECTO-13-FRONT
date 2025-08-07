@@ -25,7 +25,7 @@ const useCreateEventForm = () => {
         formData.append('img', imageFile);
       }
   
-      const data = await post('/events/create', formData, true);
+      const data = await post("/events/create", formData, { isFormData: true });
   
       toast({
         title: 'Event created successfully',
