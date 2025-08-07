@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { get } from "../utils/apiFetch";
 import { useToast } from "@chakra-ui/react";
 
-const useFetchEvents = (initialPage = 1, limit = 10) => {
+const useFetchEvents = (filters = {}, initialPage = 1, limit = 10) => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(initialPage);
@@ -13,12 +13,19 @@ const useFetchEvents = (initialPage = 1, limit = 10) => {
     const fetchEvents = async () => {
       setLoading(true);
       try {
-        const queryParams = new URLSearchParams({
-          page,
-          limit,
-          ...filters,
-        });
-        const eventsData = await get(`/events?${queryParams.toString()}`);
+        const params = new URLSearchParams();
+
+        params.append("page", page);
+        params.append("limit", limit);
+
+        for (const key in filters) {
+          if (filters[key] !== undefined && filters[key] !== "") {
+            params.append(key, filters[key]);
+          }
+        }
+
+        const eventsData = await get(`/events?${params.toString()}`);
+
         setEvents(eventsData.events);
         setTotalPages(eventsData.totalPages);
       } catch (error) {
@@ -35,7 +42,7 @@ const useFetchEvents = (initialPage = 1, limit = 10) => {
     };
 
     fetchEvents();
-  }, [page, limit, filters, toast]);
+  }, [filters, page, limit, toast]);
 
   return { events, loading, page, setPage, totalPages };
 };
