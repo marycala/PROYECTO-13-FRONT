@@ -13,7 +13,12 @@ const useFetchEvents = (initialPage = 1, limit = 10) => {
     const fetchEvents = async () => {
       setLoading(true);
       try {
-        const eventsData = await get(`/events?page=${page}&limit=${limit}`);
+        const queryParams = new URLSearchParams({
+          page,
+          limit,
+          ...filters,
+        });
+        const eventsData = await get(`/events?${queryParams.toString()}`);
         setEvents(eventsData.events);
         setTotalPages(eventsData.totalPages);
       } catch (error) {
@@ -30,7 +35,7 @@ const useFetchEvents = (initialPage = 1, limit = 10) => {
     };
 
     fetchEvents();
-  }, [page, limit, toast]);
+  }, [page, limit, filters, toast]);
 
   return { events, loading, page, setPage, totalPages };
 };
