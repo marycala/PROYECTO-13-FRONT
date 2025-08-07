@@ -11,7 +11,7 @@ import ScrollToTopButton from "../../components/ScrollToTopButton/ScrollToTopBut
 const Events = () => {
   const { user, token } = useAuth();
   const { favorites, toggleFavorite, loading } = useFavorites();
-  const { events, loading: eventsLoading } = useFetchEvents(token);
+  const { events, loading: eventsLoading, page, setPage, totalPages } = useFetchEvents(token);
   const {
     selectedCategory,
     setSelectedCategory,
@@ -121,6 +121,22 @@ const Events = () => {
           </Flex>
         </Box>
       </Flex>
+
+      <Box mt={4} mb={8} display="flex" justifyContent="center" gap={4}>
+        <Button
+          onClick={() => setPage((p) => Math.max(p - 1, 1))}
+          isDisabled={page === 1}
+        >
+          Back
+        </Button>
+        <Text alignSelf="center">Page {page} of {totalPages}</Text>
+        <Button
+          onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
+          isDisabled={page === totalPages}
+        >
+          Next
+        </Button>
+      </Box>
 
       <ScrollToTopButton />
     </Box>
