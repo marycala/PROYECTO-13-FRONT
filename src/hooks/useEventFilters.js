@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import regions from "../utils/regions";
 
 const useEventFilters = () => {
@@ -9,6 +9,9 @@ const useEventFilters = () => {
   const [maxPrice, setMaxPrice] = useState("");
   const [minDate, setMinDate] = useState("");
   const [maxDate, setMaxDate] = useState("");
+
+  const [priceError, setPriceError] = useState(null);
+  const [dateError, setDateError] = useState(null);
 
   const categories = [
     "All",
@@ -25,10 +28,33 @@ const useEventFilters = () => {
     "Fashion",
     "Other",
   ];
-
   const communities = ["All", ...Object.keys(regions)];
 
+  useEffect(() => {
+    if (minPrice !== "" && maxPrice !== "") {
+      if (parseFloat(minPrice) > parseFloat(maxPrice)) {
+        setPriceError("El precio mínimo no puede ser mayor que el máximo.");
+      } else {
+        setPriceError(null);
+      }
+    } else {
+      setPriceError(null);
+    }
+
+    if (minDate !== "" && maxDate !== "") {
+      if (new Date(minDate) > new Date(maxDate)) {
+        setDateError("La fecha de inicio no puede ser mayor que la de fin.");
+      } else {
+        setDateError(null);
+      }
+    } else {
+      setDateError(null);
+    }
+  }, [minPrice, maxPrice, minDate, maxDate]);
+
   const filteredEvents = (events) => {
+    if (priceError || dateError) return [];
+
     return events.filter((event) => {
       return (
         (selectedCategory === "All" || event.category === selectedCategory) &&
@@ -50,6 +76,8 @@ const useEventFilters = () => {
     setMaxPrice("");
     setMinDate("");
     setMaxDate("");
+    setPriceError(null);
+    setDateError(null);
   };
 
   return {
@@ -71,6 +99,8 @@ const useEventFilters = () => {
     communities,
     filteredEvents,
     resetFilters,
+    priceError,
+    dateError,
   };
 };
 
