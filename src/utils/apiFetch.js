@@ -9,7 +9,7 @@ export const setApiNavigate = (nav) => {
 const apiFetch = async (url, options = {}, retries = 1) => {
   const {
     isFormData = false,
-    timeout = 10000,
+    timeout = 60000,
     ...fetchOptions
   } = options;
 
@@ -66,7 +66,9 @@ const apiFetch = async (url, options = {}, retries = 1) => {
     clearTimeout(timeoutId);
 
     if ((error.name === "AbortError" || error.name === "TypeError") && retries > 0) {
-      console.warn(`Retrying request: ${url}`);
+      const delay = (4 - retries) * 3000;
+      console.warn(`Retrying request in ${delay / 1000}s: ${url}`);
+      await new Promise(res => setTimeout(res, delay));
       return apiFetch(url, options, retries - 1);
     }
 
@@ -75,7 +77,6 @@ const apiFetch = async (url, options = {}, retries = 1) => {
   }
 };
 
-// Métodos HTTP
 export const get = (url, options = {}) => {
   return apiFetch(url, {
     method: "GET",
