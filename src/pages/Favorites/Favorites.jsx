@@ -30,7 +30,7 @@ const Favorites = () => {
   .filter(Boolean);
 
   return (
-    <Box display="flex" justifyContent="center" w="100%" p={4}>
+    <Box display="flex" justifyContent="center" w="100%" h="100%" p={4}>
       {favoriteEvents.length === 0 ? (
         <Text display="flex" alignItems="center" fontSize="lg" color="gray.600">
           No favorite events yet.
