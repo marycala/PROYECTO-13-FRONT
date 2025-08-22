@@ -14,7 +14,7 @@ const Footer = () => {
         textAlign={{ base: "center", md: "left" }}
       >
         <Text fontSize="sm">
-          © {new Date().getFullYear()} Events By Mary. All rights reserved.
+          © {new Date().getFullYear()} Eventify. All rights reserved.
         </Text>
 
         <Box mt={{ base: 2, md: 0 }}>
