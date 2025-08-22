@@ -8,37 +8,32 @@ const FavoritesContext = createContext();
 export const FavoritesProvider = ({ children }) => {
   const { user, token } = useAuth();
   const [favorites, setFavorites] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(null);
   const toast = useToast();
 
   const fetchFavorites = async () => {
-    if (!user?._id) return;
-  
-    setLoading(true);
+    if (!user?._id || !token) return;
     try {
-      const response = await get("/users/favorites", token);
-  
+      const response = await get("/users/favorites", { headers: {} }, token);
       setFavorites(response || []);
     } catch (err) {
       console.error("Failed to fetch favorites", err);
-    } finally {
-      setLoading(false);
     }
   };
 
   const toggleFavorite = async (eventId) => {
+    if (!token) return;
     const isAlreadyFavorite = favorites.includes(eventId);
+    setLoading(eventId);
 
     try {
-      await patch(`/users/favorites/${eventId}`, { token });
+      await patch(`/users/favorites/${eventId}`, {}, token);
 
-      setFavorites((prevFavorites) => {
-        if (isAlreadyFavorite) {
-          return prevFavorites.filter((id) => id !== eventId);
-        } else {
-          return [...prevFavorites, eventId];
-        }
-      });
+      setFavorites((prev) =>
+        isAlreadyFavorite
+          ? prev.filter((id) => id !== eventId)
+          : [...prev, eventId]
+      );
 
       toast({
         title: isAlreadyFavorite ? "Removed from favorites" : "Added to favorites",
@@ -47,7 +42,7 @@ export const FavoritesProvider = ({ children }) => {
         isClosable: true,
       });
     } catch (err) {
-      console.log(err);
+      console.error(err);
       toast({
         title: "Error",
         description: "Failed to toggle favorite.",
@@ -55,32 +50,21 @@ export const FavoritesProvider = ({ children }) => {
         duration: 3000,
         isClosable: true,
       });
+    } finally {
+      setLoading(null);
     }
   };
 
   useEffect(() => {
-    if (user?._id) {
-      fetchFavorites();
-    }
-  }, [user?._id]);
+    if (user?._id) fetchFavorites();
+  }, [user?._id, token]);
 
   return (
-    <FavoritesContext.Provider
-      value={{
-        favorites,
-        fetchFavorites,
-        toggleFavorite,
-        loading,
-      }}
-    >
+    <FavoritesContext.Provider value={{ favorites, toggleFavorite, loading }}>
       {children}
     </FavoritesContext.Provider>
   );
 };
 
-const useFavorites = () => useContext(FavoritesContext);
-
+export const useFavorites = () => useContext(FavoritesContext);
 export default useFavorites;
-
-
-
