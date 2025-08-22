@@ -28,7 +28,7 @@ const Attendances = () => {
   }
 
   return (
-      <Box display="flex" justifyContent="center" w="100%" p={4}>
+      <Box display="flex" justifyContent="center" w="100%" h="100%" p={4}>
         {attendingEventIds.length === 0 ? (
           <Text display="flex" alignItems="center"  fontSize="lg" color="gray.600">You are not attending any event yet.</Text>
         ) : (
