@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
-import regions from "../utils/regions";
 
-const useEventFilters = () => {
+const useEventFilters = (locations = []) => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchTitle, setSearchTitle] = useState("");
   const [searchLocation, setSearchLocation] = useState("All");
@@ -28,22 +27,19 @@ const useEventFilters = () => {
     "Fashion",
     "Other",
   ];
-  const communities = ["All", ...Object.keys(regions)];
+
+  const communities = ["All", ...locations];
 
   useEffect(() => {
     if (minPrice !== "" && maxPrice !== "") {
-      if (parseFloat(minPrice) > parseFloat(maxPrice)) {
-        setPriceError("El precio mínimo no puede ser mayor que el máximo.");
-      } else {
-        setPriceError(null);
-      }
+      setPriceError(parseFloat(minPrice) > parseFloat(maxPrice) ? "El precio mínimo no puede ser mayor que el máximo." : null);
     } else {
       setPriceError(null);
     }
 
     if (minDate !== "" && maxDate !== "") {
       if (new Date(minDate) > new Date(maxDate)) {
-        setDateError("La fecha de inicio no puede ser mayor que la de fin.");
+        setDateError("The start date cannot be later than the end date.");
       } else {
         setDateError(null);
       }
@@ -59,7 +55,7 @@ const useEventFilters = () => {
       return (
         (selectedCategory === "All" || event.category === selectedCategory) &&
         (searchTitle === "" || event.title.toLowerCase().includes(searchTitle.toLowerCase())) &&
-        (searchLocation === "All" || (regions[searchLocation] && regions[searchLocation].includes(event.location))) &&
+        (searchLocation === "All" || event.location === searchLocation) &&
         (minPrice === "" || event.price >= parseFloat(minPrice)) &&
         (maxPrice === "" || event.price <= parseFloat(maxPrice)) &&
         (minDate === "" || new Date(event.date) >= new Date(minDate)) &&
