@@ -50,8 +50,6 @@ const useCreateEventForm = () => {
 
       if (imageFile) formData.append("img", imageFile);
 
-      console.log("Category being sent:", category);
-
       const data = await post("/events/create", formData, token, { isFormData: true });
 
       toast({
