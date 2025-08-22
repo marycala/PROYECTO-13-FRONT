@@ -11,7 +11,7 @@ import FavoriteButton from "../../components/FavoriteButton/FavoriteButton";
 import AttendButton from "../../components/AttendButton/AttendButton";
 import { useFavorites } from "../../context/useFavorites";
 
-const EventCard = ({ event, variant = "default" }) => {
+const EventCard = ({ event, variant = "default", maxW }) => {
   const isCompact = variant === "compact";
   const navigate = useNavigate();
   const { favorites, toggleFavorite, loading } = useFavorites();
@@ -26,28 +26,23 @@ const EventCard = ({ event, variant = "default" }) => {
       onClick={handleCardClick}
       borderWidth="1px"
       borderRadius="md"
-      p={4}
+      p={isCompact ? 3 : 4}
       boxShadow="lg"
       display="flex"
-      flexDirection={
-        isCompact
-          ? { base: "column", custom: "row" }
-          : "column"
-      }
-      justifyContent={isCompact ? "space-between" : "center"}
+      flexDirection={isCompact ? "row" : "column"}
+      justifyContent={isCompact ? "flex-start" : "center"}
       alignItems="center"
-      w={isCompact ? "80%" : ["90%", "85%", "80%"]}
-      maxW={isCompact ? "none" : "1000px"}
-      mx={isCompact ? 0 : "auto"}
-      minH={isCompact ? "150px" : "500px"}
+      w="100%"
+      maxW={maxW}
       position="relative"
       cursor="pointer"
-      _hover={{ boxShadow: "xl", transform: "scale(1.05)" }}
+      _hover={{ boxShadow: "xl", transform: "scale(1.02)" }}
+      transition="all 0.2s"
     >
       <Box
         position="absolute"
         top={2}
-        right={1}
+        right={2}
         zIndex={1}
         onClick={(e) => e.stopPropagation()}
       >
@@ -63,33 +58,29 @@ const EventCard = ({ event, variant = "default" }) => {
         <Image
           src={event.img}
           alt={event.title}
-          w="40%"
-          h="150px"
-          objectFit="cover"
+          w={{ sm: "220px", md: "320px" }}
+          h={{ sm: "100px", md: "200px" }}
+          objectFit="contain"
           borderRadius="md"
           mr={4}
+          flexShrink={0}
         />
       ) : (
-        <AspectRatio
-          ratio={16 / 9}
-          w="80%"
-          maxW="1200px"
-          mb={4}
-          borderRadius="md"
-          overflow="hidden"
-        >
+        <AspectRatio ratio={16 / 9} w="100%" mb={4} borderRadius="md" overflow="hidden">
           <Image
             src={event.img}
             alt={event.title}
-            objectFit="cover"
+            objectFit="contain"
             objectPosition="center"
           />
         </AspectRatio>
       )}
 
-      <Box flex="1" align="center">
-        <Heading size="md">{event.title}</Heading>
-        <Text fontSize="sm" color="gray.500">
+      <Box flex="1" ml={isCompact ? 0 : 0} textAlign={isCompact ? "left" : "center"}>
+        <Heading size={isCompact ? "sm" : "md"} noOfLines={2}>
+          {event.title}
+        </Heading>
+        <Text fontSize={isCompact ? "xs" : "sm"} color="gray.500" mt={1}>
           {new Date(event.date).toLocaleString(undefined, {
             year: 'numeric',
             month: 'short',
@@ -98,8 +89,8 @@ const EventCard = ({ event, variant = "default" }) => {
             minute: '2-digit'
           })} - {event.location}
         </Text>
-        {!isCompact && <Text mt={2}>{event.description}</Text>}
-        <Text fontWeight="bold" color="teal.500" mt={2}>
+        {!isCompact && <Text mt={2} noOfLines={4}>{event.description}</Text>}
+        <Text fontWeight="bold" color="teal.500" mt={2} fontSize={isCompact ? "sm" : "md"}>
           {event.price != null ? `$${event.price.toFixed(2)}` : "Free"}
         </Text>
 
