@@ -6,28 +6,16 @@ export const setApiNavigate = (nav) => {
   navigate = nav;
 };
 
-const apiFetch = async (url, options = {}, retries = 1) => {
-  const {
-    isFormData = false,
-    timeout = 60000,
-    ...fetchOptions
-  } = options;
-
+const apiFetch = async (url, options = {}, retries = 1, tokenOverride) => {
+  const { isFormData = false, timeout = 60000, ...fetchOptions } = options;
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeout);
 
-  const token = localStorage.getItem("token");
-  const headers = {
-    ...(fetchOptions.headers || {}),
-  };
+  const token = tokenOverride || localStorage.getItem("token");
 
-  if (!isFormData) {
-    headers["Content-Type"] = "application/json";
-  }
-
-  if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
-  }
+  const headers = { ...(fetchOptions.headers || {}) };
+  if (!isFormData) headers["Content-Type"] = "application/json";
+  if (token) headers["Authorization"] = `Bearer ${token}`;
 
   if (fetchOptions.body && !isFormData && typeof fetchOptions.body === "object") {
     fetchOptions.body = JSON.stringify(fetchOptions.body);
@@ -41,22 +29,13 @@ const apiFetch = async (url, options = {}, retries = 1) => {
     });
 
     clearTimeout(timeoutId);
-
-    let data;
-    try {
-      data = await response.json();
-    } catch {
-      data = null;
-    }
+    const data = await response.json().catch(() => null);
 
     if (!response.ok) {
       if (response.status === 401) {
         localStorage.removeItem("token");
-        if (navigate) {
-          navigate("/login");
-        } else {
-          window.location.href = "/login";
-        }
+        if (navigate) navigate("/login");
+        else window.location.href = "/login";
       }
       throw new Error(data?.message || `Error: ${response.statusText}`);
     }
@@ -64,15 +43,10 @@ const apiFetch = async (url, options = {}, retries = 1) => {
     return data;
   } catch (error) {
     clearTimeout(timeoutId);
-
     if ((error.name === "AbortError" || error.name === "TypeError") && retries > 0) {
-      const delay = (4 - retries) * 3000;
-      console.warn(`Retrying request in ${delay / 1000}s: ${url}`);
-      await new Promise(res => setTimeout(res, delay));
-      return apiFetch(url, options, retries - 1);
+      await new Promise(res => setTimeout(res, (4 - retries) * 3000));
+      return apiFetch(url, options, retries - 1, tokenOverride);
     }
-
-    console.error(error);
     throw error;
   }
 };
@@ -84,12 +58,8 @@ export const get = (url, options = {}) => {
   });
 };
 
-export const post = (url, body, options = {}) => {
-  return apiFetch(url, {
-    method: "POST",
-    body,
-    ...options,
-  });
+export const post = (url, body, token) => {
+  return apiFetch(url, { method: "POST", body }, 1, token);
 };
 
 export const put = (url, body, options = {}) => {
@@ -100,16 +70,12 @@ export const put = (url, body, options = {}) => {
   });
 };
 
-export const patch = (url, body, options = {}) => {
-  return apiFetch(url, {
-    method: "PATCH",
-    body,
-    ...options,
-  });
+export const patch = (url, body, token) => {
+  return apiFetch(url, { method: "PATCH", body }, 1, token);
 };
 
-export const remove = (url) => {
-  return apiFetch(url, { method: "DELETE" });
+export const remove = (url, token) => {
+  return apiFetch(url, { method: "DELETE" }, 1, token);
 };
 
 export const deleteEvent = (eventId) => {
