@@ -58,8 +58,8 @@ export const get = (url, options = {}) => {
   });
 };
 
-export const post = (url, body, token) => {
-  return apiFetch(url, { method: "POST", body }, 1, token);
+export const post = (url, body, token, options = {}) => {
+  return apiFetch(url, { method: "POST", body, ...options }, 1, token);
 };
 
 export const put = (url, body, options = {}) => {

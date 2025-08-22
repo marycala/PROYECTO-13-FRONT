@@ -15,16 +15,16 @@ const useCreateEventForm = () => {
     "Music", "Sports", "Tech", "Art", "Food", "Business",
     "Education", "Health", "Gaming", "Travel", "Fashion", "Other"
   ];
-  
+
   const handleSubmit = async (values) => {
     setIsLoading(true);
-  
+
     try {
-      let category = values.category.trim();
+      let category = values.category?.trim();
       category = validCategories.find(
-        (cat) => cat.toLowerCase() === category.toLowerCase()
+        (cat) => cat.toLowerCase() === category?.toLowerCase()
       );
-  
+
       if (!category) {
         toast({
           title: "Invalid category",
@@ -36,20 +36,24 @@ const useCreateEventForm = () => {
         setIsLoading(false);
         return;
       }
-  
+
       const formData = new FormData();
       Object.keys(values).forEach((key) => {
         if (values[key] !== undefined && values[key] !== null) {
-          formData.append(key, values[key]);
+          if (key === "category") {
+            formData.append("category", category);
+          } else {
+            formData.append(key, values[key]);
+          }
         }
       });
-  
-      formData.set("category", category);
-  
+
       if (imageFile) formData.append("img", imageFile);
-  
+
+      console.log("Category being sent:", category);
+
       const data = await post("/events/create", formData, token, { isFormData: true });
-  
+
       toast({
         title: "Event created successfully",
         description: data.message || "Your event has been created successfully!",
@@ -57,7 +61,7 @@ const useCreateEventForm = () => {
         duration: 4000,
         isClosable: true,
       });
-  
+
       navigate("/events");
     } catch (error) {
       toast({
@@ -70,7 +74,7 @@ const useCreateEventForm = () => {
     } finally {
       setIsLoading(false);
     }
-  };  
+  };
 
   return {
     isLoading,
