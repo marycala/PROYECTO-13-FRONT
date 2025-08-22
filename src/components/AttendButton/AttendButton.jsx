@@ -5,6 +5,7 @@ const AttendButton = ({ eventId }) => {
   const { isAttending, toggleAttendance, loading } = useAttendance();
 
   const attending = isAttending(eventId);
+  const isLoading = loading === eventId;
 
   return (
     <Button
@@ -13,7 +14,7 @@ const AttendButton = ({ eventId }) => {
         toggleAttendance(eventId);
       }}
       colorScheme={attending ? "red" : "teal"}
-      isLoading={loading}
+      isLoading={isLoading}
     >
       {attending ? "Cancel attendance" : "Register to attend"}
     </Button>
@@ -21,4 +22,3 @@ const AttendButton = ({ eventId }) => {
 };
 
 export default AttendButton;
-
