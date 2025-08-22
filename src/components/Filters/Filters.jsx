@@ -13,7 +13,7 @@ const Filters = ({
   setMinDate,
   maxDate,
   setMaxDate,
-  communities,
+  locations = [],
   resetFilters,
   priceError,
   dateError,
@@ -40,14 +40,12 @@ const Filters = ({
         Search by Location
       </Text>
       <Select
-        placeholder="Select community"
         value={searchLocation}
         onChange={(e) => setSearchLocation(e.target.value)}
-        mb={4}
       >
-        {communities.map((community) => (
-          <option key={community} value={community}>
-            {community}
+        {locations.map((loc) => (
+          <option key={loc} value={loc}>
+            {loc}
           </option>
         ))}
       </Select>
