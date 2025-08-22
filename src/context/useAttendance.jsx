@@ -6,18 +6,20 @@ import { useAuth } from "../store/auth";
 const AttendanceContext = createContext();
 
 export const AttendanceProvider = ({ children }) => {
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const [attendingEventIds, setAttendingEventIds] = useState([]);
   const [loading, setLoading] = useState(false);
   const toast = useToast();
 
   const fetchAttendances = async () => {
-    if (!user?._id) return;
+    if (!user?._id || !token) return;
 
     setLoading(true);
     try {
-      const response = await get(`/attendees/user/${user._id}`);
-      setAttendingEventIds(response.attendances.map((att) => String(att.eventId)));
+      const response = await get(`/attendees/user/${user._id}`, {}, token);
+      setAttendingEventIds(
+        response.attendances.map((att) => String(att.eventId))
+      );
     } catch (err) {
       console.error("Failed to fetch attendances", err);
     } finally {
@@ -26,19 +28,21 @@ export const AttendanceProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    fetchAttendances();
-  }, [user?._id]);
+    if (user?._id) fetchAttendances();
+  }, [user?._id, token]);
 
   const isAttending = (eventId) => attendingEventIds.includes(String(eventId));
 
   const toggleAttendance = async (eventId) => {
+    if (!token) return;
+
+    setLoading(true);
     try {
       if (isAttending(eventId)) {
-        await remove(`/attendees/event/${eventId}`);
-        setAttendingEventIds((prev) => {
-          const updated = prev.filter((id) => id !== String(eventId));
-          return updated.length !== prev.length ? updated : prev;
-        });
+        await remove(`/attendees/event/${eventId}`, token);
+        setAttendingEventIds((prev) =>
+          prev.filter((id) => id !== String(eventId))
+        );
         toast({
           title: "Registration cancelled",
           status: "success",
@@ -46,11 +50,8 @@ export const AttendanceProvider = ({ children }) => {
           isClosable: true,
         });
       } else {
-        await post(`/attendees/${eventId}`, { userId: user._id });
-        setAttendingEventIds((prev) => {
-          const updated = [...prev, String(eventId)];
-          return updated.length !== prev.length ? updated : prev;
-        });
+        await post(`/attendees/${eventId}`, { userId: user._id }, token);
+        setAttendingEventIds((prev) => [...prev, String(eventId)]);
         toast({
           title: "Successfully registered",
           status: "success",
@@ -59,7 +60,7 @@ export const AttendanceProvider = ({ children }) => {
         });
       }
     } catch (err) {
-      console.error("Error to update attendance", err);
+      console.error("Error updating attendance", err);
       toast({
         title: "Error",
         description: err?.message || "Unable to update attendance",
@@ -67,9 +68,11 @@ export const AttendanceProvider = ({ children }) => {
         duration: 3000,
         isClosable: true,
       });
+    } finally {
+      setLoading(false);
     }
   };
-   
+
   return (
     <AttendanceContext.Provider
       value={{ attendingEventIds, isAttending, toggleAttendance, loading }}
@@ -79,6 +82,5 @@ export const AttendanceProvider = ({ children }) => {
   );
 };
 
-const useAttendance = () => useContext(AttendanceContext);
-
+export const useAttendance = () => useContext(AttendanceContext);
 export default useAttendance;
