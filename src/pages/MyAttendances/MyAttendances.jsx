@@ -1,4 +1,4 @@
-import { Box, VStack, Text } from "@chakra-ui/react";
+import { Box, SimpleGrid, Text } from "@chakra-ui/react";
 import EventCard from "../../components/EventCard/EventCard";
 import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
 import useAttendance from "../../context/useAttendance";
@@ -27,32 +27,57 @@ const Attendances = () => {
     );
   }
 
-  return (
+  const attendingEvents = attendingEventIds
+    .map((eventId) => events.find((event) => event._id === eventId))
+    .filter(Boolean);
+
+  if (attendingEvents.length === 0) {
+    return (
       <Box display="flex" justifyContent="center" w="100%" h="100%" p={4}>
-        {attendingEventIds.length === 0 ? (
-          <Text display="flex" alignItems="center"  fontSize="lg" color="gray.600">You are not attending any event yet.</Text>
-        ) : (
-          <VStack spacing={4} w="100%">
-            {attendingEventIds.map((eventId) => {
-              const event = events.find(event => event._id === eventId);
-              if (!event) return null;
-              return (
-                <EventCard
-                  key={eventId}
-                  event={event}
-                  isFavorite={favorites.includes(eventId)}
-                  toggleFavorite={() => toggleFavorite(eventId)}
-                  onToggleFavorite={() => toggleFavorite(eventId)}
-                  isAttending={isAttending(eventId)}
-                  toggleAttendance={() => toggleAttendance(eventId)}
-                  variant="compact"
-                />
-              );
-            })}
-          </VStack>
-        )
-        }
+        <Text display="flex" alignItems="center" fontSize="lg" color="gray.600">
+          You are not attending any event yet.
+        </Text>
       </Box>
+    );
+  }
+
+  return (
+    <Box p={4} display="flex" justifyContent="center">
+      {attendingEvents.length === 1 ? (
+          <EventCard
+            key={attendingEvents[0]._id}
+            event={attendingEvents[0]}
+            isFavorite={favorites.includes(attendingEvents[0]._id)}
+            onToggleFavorite={() => toggleFavorite(attendingEvents[0]._id)}
+            isAttending={isAttending(attendingEvents[0]._id)}
+            toggleAttendance={() => toggleAttendance(attendingEvents[0]._id)}
+            variant="compact"
+            maxW={{ base: "90%", sm: "730px", md: "1000px" }}
+            w="100%"
+          />
+      ) : (
+        <SimpleGrid 
+          minChildWidth={{ base: "90%", sm: "450px", md: "700px" }}
+          spacing={6}
+          w="100%"
+          justifyItems="center"
+        >
+          {attendingEvents.map((event) => (
+            <EventCard
+              key={event._id}
+              event={event}
+              isFavorite={favorites.includes(event._id)}
+              onToggleFavorite={() => toggleFavorite(event._id)}
+              isAttending={isAttending(event._id)}
+              toggleAttendance={() => toggleAttendance(event._id)}
+              variant="compact"
+              maxW={{ base: "90%", sm: "730px" }}
+              w="50%"
+            />
+          ))}
+        </SimpleGrid>
+      )}
+    </Box>
   );
 };
 

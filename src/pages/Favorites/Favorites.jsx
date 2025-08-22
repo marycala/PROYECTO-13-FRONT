@@ -1,4 +1,4 @@
-import { Box, VStack, Text } from "@chakra-ui/react";
+import { Box, SimpleGrid, Text } from "@chakra-ui/react";
 import EventCard from "../../components/EventCard/EventCard";
 import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
 import useFavorites from "../../context/useFavorites";
@@ -18,7 +18,8 @@ const Favorites = () => {
         flexDirection="column"
         justifyContent="center"
         alignItems="center" 
-        p={4}>
+        p={4}
+      >
         <LoadingSpinner />
         <Text mt={2} color="gray.500">Loading favorites...</Text>
       </Box>
@@ -26,35 +27,53 @@ const Favorites = () => {
   }
 
   const favoriteEvents = favorites
-  .map((eventId) => events.find((event) => event._id === eventId))
-  .filter(Boolean);
+    .map((eventId) => events.find((event) => event._id === eventId))
+    .filter(Boolean);
 
-  return (
-    <Box display="flex" justifyContent="center" w="100%" h="100%" p={4}>
-      {favoriteEvents.length === 0 ? (
+  if (favoriteEvents.length === 0) {
+    return (
+      <Box display="flex" justifyContent="center" w="100%" h="100%" p={4}>
         <Text display="flex" alignItems="center" fontSize="lg" color="gray.600">
           No favorite events yet.
         </Text>
+      </Box>
+    );
+  }
+
+  return (
+    <Box p={4} display="flex" justifyContent="center">
+      {favoriteEvents.length === 1 ? (
+        <EventCard
+          key={favoriteEvents[0]._id}
+          event={favoriteEvents[0]}
+          isFavorite={favorites.includes(favoriteEvents[0]._id)}
+          onToggleFavorite={() => toggleFavorite(favoriteEvents[0]._id)}
+          variant="compact"
+          maxW={{ base: "90%", sm: "730px", md: "1000px" }}
+          w="100%"
+        />
       ) : (
-        <VStack spacing={4} w="100%">
-          {favorites.map((eventId) => {
-            const event = events.find((event) => event._id === eventId);
-            if (!event) return null;
-            return (
-              <EventCard
-                key={eventId}
-                event={event}
-                isFavorite={favorites.includes(event._id)}
-                onToggleFavorite={() => toggleFavorite(eventId)}
-                variant="compact"
-              />
-            );
-          })}
-        </VStack>
-        
+        <SimpleGrid
+          minChildWidth={{ base: "90%", sm: "450px", md: "700px" }}
+          spacing={6}
+          w="100%"
+          justifyItems="center"
+        >
+          {favoriteEvents.map((event) => (
+            <EventCard
+              key={event._id}
+              event={event}
+              isFavorite={favorites.includes(event._id)}
+              onToggleFavorite={() => toggleFavorite(event._id)}
+              variant="compact"
+              maxW={{ base: "90%", sm: "730px" }}
+              w="50%"
+            />
+          ))}
+        </SimpleGrid>
       )}
     </Box>
-  );
+  );  
 };
 
 export default Favorites;
