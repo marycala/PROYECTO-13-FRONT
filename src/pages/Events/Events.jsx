@@ -5,12 +5,17 @@ import useFavorites from "../../context/useFavorites";
 import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
 import useFetchEvents from "../../hooks/useFetchEvents";
 import useEventFilters from "../../hooks/useEventFilters";
+import useLocations from "../../hooks/useLocations";
 import Filters from "../../components/Filters/Filters";
 import ScrollToTopButton from "../../components/ScrollToTopButton/ScrollToTopButton";
+import { useState, useEffect } from "react";
+import Pagination from "../../components/Pagination/Pagination";
 
 const Events = () => {
   const { user } = useAuth();
   const { favorites, toggleFavorite, loading } = useFavorites();
+
+  const locations = useLocations();
 
   const {
     selectedCategory,
@@ -32,6 +37,8 @@ const Events = () => {
     resetFilters
   } = useEventFilters();
 
+  const [page, setPage] = useState(1);
+
   const filters = {
     category: selectedCategory !== "All" ? selectedCategory : undefined,
     title: searchTitle || undefined,
@@ -42,9 +49,13 @@ const Events = () => {
     maxDate: maxDate || undefined,
   };
 
-  const { events, loading: eventsLoading, page, setPage, totalPages } = useFetchEvents(filters, 1, 10);
+  useEffect(() => {
+    setPage(1);
+  }, [JSON.stringify(filters)]);
 
-  if (eventsLoading || loading) {
+  const { events, loading: eventsLoading, totalPages } = useFetchEvents(filters, page, 10);
+
+  if ((eventsLoading && events.length === 0) || loading) {
     return (
       <Box 
         flex="1"
@@ -52,7 +63,8 @@ const Events = () => {
         flexDirection="column"
         justifyContent="center"
         alignItems="center" 
-        p={4}>
+        p={4}
+      >
         <LoadingSpinner />
         <Text mt={2} color="gray.500">Loading events...</Text>
       </Box>
@@ -74,6 +86,8 @@ const Events = () => {
           </Button>
         ))}
       </Flex>
+
+      <Pagination page={page} totalPages={totalPages} setPage={setPage} />
 
       <Flex 
         flexDirection={{ base: "column", md: "row" }} 
@@ -100,7 +114,7 @@ const Events = () => {
             setMinDate={setMinDate}
             maxDate={maxDate}
             setMaxDate={setMaxDate}
-            communities={communities}
+            locations={["All", ...locations]} 
             resetFilters={resetFilters}
           />
         </Box>
@@ -131,21 +145,7 @@ const Events = () => {
         </Box>
       </Flex>
 
-      <Box mt={4} mb={8} display="flex" justifyContent="center" gap={4}>
-        <Button
-          onClick={() => setPage((p) => Math.max(p - 1, 1))}
-          isDisabled={page === 1}
-        >
-          Back
-        </Button>
-        <Text alignSelf="center">Page {page} of {totalPages}</Text>
-        <Button
-          onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
-          isDisabled={page === totalPages}
-        >
-          Next
-        </Button>
-      </Box>
+      <Pagination page={page} totalPages={totalPages} setPage={setPage} />
 
       <ScrollToTopButton />
     </Box>
