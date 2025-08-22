@@ -10,16 +10,15 @@ import {
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
+const categories = [
+  "Music", "Sports", "Tech", "Art", "Food", "Business",
+  "Education", "Health", "Gaming", "Travel", "Fashion", "Other",
+];
+
 const validationSchema = Yup.object({
   title: Yup.string().min(4).max(50).required("Event title is required"),
   category: Yup.string()
-    .oneOf(
-      [
-        "Music", "Sports", "Tech", "Art", "Food", "Business",
-        "Education", "Health", "Gaming", "Travel", "Fashion", "Other",
-      ],
-      "Invalid category"
-    )
+    .oneOf(categories, "Invalid category")
     .required("Category is required"),
   date: Yup.date().required("Date is required"),
   location: Yup.string().required("Location is required"),
@@ -52,29 +51,19 @@ const EventForm = ({
             ].map(({ id, type }) => (
               <FormControl key={id} mb={4} isInvalid={touched[id] && errors[id]}>
                 <FormLabel htmlFor={id}>{id[0].toUpperCase() + id.slice(1)}</FormLabel>
-                <Field
-                  as={Input}
-                  id={id}
-                  name={id}
-                  type={type}
-                />
+                <Field as={Input} id={id} name={id} type={type} />
                 <ErrorMessage name={id} component="div" style={{ color: "red" }} />
               </FormControl>
             ))}
 
             <FormControl mb={4} isInvalid={touched.category && errors.category}>
               <FormLabel htmlFor="category">Category</FormLabel>
-              <Field
-                as={Select}
-                id="category"
-                name="category"
-              >
+              <Field as={Select} id="category" name="category">
                 <option value="">Select category</option>
-                {[
-                  "Music", "Sports", "Tech", "Art", "Food", "Business",
-                  "Education", "Health", "Gaming", "Travel", "Fashion", "Other",
-                ].map((cat) => (
-                  <option key={cat} value={cat}>{cat}</option>
+                {categories.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
                 ))}
               </Field>
               <ErrorMessage name="category" component="div" style={{ color: "red" }} />
@@ -82,11 +71,7 @@ const EventForm = ({
 
             <FormControl mb={4} isInvalid={touched.description && errors.description}>
               <FormLabel htmlFor="description">Description</FormLabel>
-              <Field
-                as={Textarea}
-                id="description"
-                name="description"
-              />
+              <Field as={Textarea} id="description" name="description" />
               <ErrorMessage name="description" component="div" style={{ color: "red" }} />
             </FormControl>
 
