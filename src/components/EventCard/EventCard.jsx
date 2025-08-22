@@ -9,16 +9,13 @@ import {
 } from "@chakra-ui/react";
 import FavoriteButton from "../../components/FavoriteButton/FavoriteButton";
 import AttendButton from "../../components/AttendButton/AttendButton";
+import { useFavorites } from "../../context/useFavorites";
 
-const EventCard = ({
-  event,
-  isFavorite,
-  onToggleFavorite,
-  variant = "default",
-}) => {
+const EventCard = ({ event, variant = "default" }) => {
   const isCompact = variant === "compact";
-
   const navigate = useNavigate();
+  const { favorites, toggleFavorite, loading } = useFavorites();
+  const isFavorite = favorites.includes(event._id);
 
   const handleCardClick = () => {
     navigate(`/events/${event._id}`);
@@ -55,9 +52,10 @@ const EventCard = ({
         onClick={(e) => e.stopPropagation()}
       >
         <FavoriteButton
-          eventId={event._id}
           isFavorite={isFavorite}
-          onToggleFavorite={onToggleFavorite}
+          onToggleFavorite={() => toggleFavorite(event._id)}
+          loading={loading}
+          eventId={event._id}
         />
       </Box>
 
@@ -92,17 +90,15 @@ const EventCard = ({
       <Box flex="1" align="center">
         <Heading size="md">{event.title}</Heading>
         <Text fontSize="sm" color="gray.500">
-        {new Date(event.date).toLocaleString(undefined, {
-          year: 'numeric',
-          month: 'short',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit'
-        })} - {event.location}
+          {new Date(event.date).toLocaleString(undefined, {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          })} - {event.location}
         </Text>
-        {!isCompact && (
-          <Text mt={2}>{event.description}</Text>
-        )}
+        {!isCompact && <Text mt={2}>{event.description}</Text>}
         <Text fontWeight="bold" color="teal.500" mt={2}>
           {event.price != null ? `$${event.price.toFixed(2)}` : "Free"}
         </Text>
