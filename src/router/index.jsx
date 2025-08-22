@@ -12,6 +12,8 @@ import EventDetail from "../pages/EventDetail/EventDetail";
 import AppLayout from "../layouts/AppLayout";
 import { useEffect } from "react";
 import { setApiNavigate } from "../utils/apiFetch";
+import About from "../pages/About/About";
+import Contact from "../pages/Contact/Contact";
 
 const RouterWithNavigate = () => {
   const navigate = useNavigate();
@@ -32,6 +34,8 @@ const RouterWithNavigate = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/favorites" element={<Favorites />} />
         <Route path="/attendances" element={<Attendances />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact /> }/>
       </Route>
       <Route path="*" element={<NotFound />} />
     </Routes>
